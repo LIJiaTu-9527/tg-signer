@@ -2,6 +2,8 @@
 
 [English](./README_EN.md)
 
+> 本项目基于原作者 [Amchii/tg-signer](https://github.com/amchii/tg-signer) 进行二次开发，主要补充和增强了 WebUI、运行配置流程以及 Docker 部署支持。
+
 一个用于 Telegram 自动签到、消息发送、消息监控、自动回复和 WebUI 管理的开源项目。
 
 项目支持两种使用方式：

@@ -2,6 +2,8 @@
 
 [中文文档](./README.md)
 
+> This project is based on [Amchii/tg-signer](https://github.com/amchii/tg-signer) and extends it with a more complete WebUI, run configuration workflow, and Docker deployment support.
+
 TG Signer is an open-source Telegram automation toolkit for check-ins, monitoring, auto-replies, instant operations, and WebUI-based management.
 
 It supports both:
