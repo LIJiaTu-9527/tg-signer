@@ -1,0 +1,24 @@
+services:
+  tg-signer-webui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TZ: ${TZ:-Asia/Shanghai}
+    container_name: tg-signer-webui
+    restart: unless-stopped
+    ports:
+      - "${TG_SIGNER_PORT:-8080}:8080"
+    environment:
+      TZ: ${TZ:-Asia/Shanghai}
+      TG_PROXY: ${TG_PROXY:-}
+      TG_SIGNER_GUI_AUTHCODE: ${TG_SIGNER_GUI_AUTHCODE:-}
+      TG_SIGNER_GUI_STORAGE_SECRET: ${TG_SIGNER_GUI_STORAGE_SECRET:-}
+      TG_SIGNER_WORKDIR: /data/.signer
+      TG_SIGNER_SESSION_DIR: /data/sessions
+      TG_SIGNER_LOG_DIR: /data/logs
+      TG_SIGNER_LOG_FILE: /data/logs/tg-signer.log
+      TG_SIGNER_GUI_HOST: 0.0.0.0
+      TG_SIGNER_GUI_PORT: 8080
+    volumes:
+      - ./data:/data
