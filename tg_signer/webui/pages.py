@@ -39,6 +39,7 @@ class LoginPanel:
         self.notify_error = notify_error
         self.on_global_refresh = on_global_refresh
         self.account_select = None
+        self.account_hint = None
         self.auth_status = None
         self.pending_status = None
         self._build()
@@ -55,12 +56,9 @@ class LoginPanel:
                 "text-sm text-gray-500"
             )
             with ui.grid(columns=2).classes("w-full gap-4"):
-                self.account_select = ui.select(
+                self.account_select = ui.input(
                     label="账号",
-                    options=[initial_account],
-                    with_input=True,
-                    new_value_mode="add-unique",
-                    clearable=True,
+                    placeholder="例如 xiaohao",
                     value=initial_account,
                 ).props("outlined")
                 self.session_dir_input = ui.input(
@@ -83,6 +81,7 @@ class LoginPanel:
                     value=self.runtime.settings.in_memory,
                 )
             with ui.expansion("高级登录设置").classes("w-full"):
+                self.account_hint = ui.label("").classes("text-xs text-gray-500")
                 self.session_string_input = ui.textarea(
                     label="Session String",
                     value=self.runtime.settings.session_string,
@@ -124,11 +123,13 @@ class LoginPanel:
     def refresh(self) -> None:
         accounts = list_session_accounts(self.session_dir_input.value)
         current = (self.account_select.value or self.runtime.settings.account or "").strip()
-        if current and current not in accounts:
-            accounts.insert(0, current)
-        self.account_select.options = accounts
         self.account_select.value = current or (accounts[0] if accounts else "my_account")
         self.account_select.update()
+        existing = ", ".join(accounts) if accounts else "暂无"
+        self.account_hint.text = (
+            f"这里填写你自定义的账号别名，会生成对应的 session 文件，例如 xiaohao.session。当前已存在账号: {existing}"
+        )
+        self.account_hint.update()
         self.refresh_status_only()
 
     def refresh_status_only(self) -> None:
