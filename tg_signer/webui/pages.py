@@ -59,6 +59,8 @@ class LoginPanel:
                     label="账号",
                     options=[initial_account],
                     with_input=True,
+                    new_value_mode="add-unique",
+                    clearable=True,
                     value=initial_account,
                 ).props("outlined")
                 self.session_dir_input = ui.input(
@@ -264,6 +266,8 @@ class RunConfigPanel:
                     label="运行账号",
                     options=[initial_account],
                     with_input=True,
+                    new_value_mode="add-unique",
+                    clearable=True,
                     value=initial_account,
                 ).props("outlined")
                 self.signer_select = ui.select(
@@ -519,6 +523,8 @@ class ImmediateOpsPanel:
                 label="使用账号",
                 options=[initial_account],
                 with_input=True,
+                new_value_mode="add-unique",
+                clearable=True,
                 value=initial_account,
             ).props("outlined").classes("w-full max-w-sm")
             with ui.tabs().classes("w-full") as tabs:
