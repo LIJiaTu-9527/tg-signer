@@ -169,9 +169,10 @@ class InteractiveSignerConfig:
                         if not selected_chat:
                             return
 
-                        chat_id, label = selected_chat
-                        # Auto fill ID
-                        id_input.value = chat_id
+                        chat_id, username, label = selected_chat
+                        # Prefer username for bots/private chats because it is
+                        # more reliable than raw positive IDs in fresh sessions.
+                        id_input.value = f"@{username}" if username else str(chat_id)
 
                         # Auto fill name if empty
                         if not name_input.value:
@@ -198,7 +199,7 @@ class InteractiveSignerConfig:
                                 username = c.get("username")
                                 if username:
                                     label += f" (@{username})"
-                                value = (c["id"], label)
+                                value = (c["id"], c.get("username"), label)
                                 options[value] = label
                             chat_select.options = options
                             chat_select.enable()
@@ -235,7 +236,7 @@ class InteractiveSignerConfig:
             with ui.grid(columns=2).classes("w-full gap-4 mb-4"):
                 id_input = (
                     ui.input(
-                        label="Chat ID",
+                        label="Chat ID / @username",
                         value=str(d_chat_id) if d_chat_id else "",
                         placeholder="整数ID (点击选择)",
                     )
@@ -373,7 +374,7 @@ class InteractiveSignerConfig:
             def save_chat():
                 try:
                     try:
-                        cid = int(id_input.value)
+                        cid = (id_input.value or "").strip()
                     except (ValueError, TypeError):
                         raise ValueError("Chat ID不能为空且必须是整数")
 

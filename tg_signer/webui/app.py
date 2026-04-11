@@ -39,7 +39,7 @@ from tg_signer.webui.schema_utils import clean_schema
 SIGNER_TEMPLATE: Dict[str, object] = {
     "chats": [
         {
-            "chat_id": 123456789,
+            "chat_id": "@bot_or_user",
             "name": "示例签到",
             "delete_after": None,
             "actions": [{"action": 1, "text": "签到"}],

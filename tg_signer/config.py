@@ -13,7 +13,7 @@ from typing import (
     Union,
 )
 
-from pydantic import AnyHttpUrl, BaseModel, ValidationError
+from pydantic import AnyHttpUrl, BaseModel, ValidationError, field_validator
 from pyrogram.types import Chat, Message
 from typing_extensions import Self, TypeAlias
 
@@ -77,6 +77,19 @@ class BaseJSONConfig(BaseModel):
         return None
 
 
+def normalize_chat_target(value: Union[int, str]) -> Union[int, str]:
+    if isinstance(value, str):
+        raw = value.strip()
+        if not raw:
+            raise ValueError("chat_id 不能为空")
+        if raw.startswith("@"):
+            raw = raw[1:]
+        if raw.lstrip("-").isdigit():
+            return int(raw)
+        return raw
+    return value
+
+
 class SignConfigV1(BaseJSONConfig):
     version = 1
 
@@ -102,7 +115,7 @@ class SignConfigV1(BaseJSONConfig):
 
 class SignChatV2(BaseJSONConfig):
     version: ClassVar = 2
-    chat_id: int
+    chat_id: Union[int, str]
     delete_after: Optional[int] = None
     sign_text: Union[str, Literal["🎲", "🎯", "🏀", "⚽", "🎳", "🎰"]]
     as_dice: bool = False  # 作为Dice类型的emoji进行发送
@@ -117,6 +130,10 @@ class SignChatV2(BaseJSONConfig):
             or self.choose_option_by_image
             or self.has_calculation_problem
         )
+
+    _normalize_chat_id = field_validator("chat_id", mode="before")(
+        normalize_chat_target
+    )
 
 
 class SignConfigV2(BaseJSONConfig):
@@ -226,10 +243,13 @@ ActionT: TypeAlias = Union[
 
 class SignChatV3(BaseJSONConfig):
     version: ClassVar = 3
-    chat_id: int
+    chat_id: Union[int, str]
     name: Optional[str] = None
     delete_after: Optional[int] = None
     actions: List[ActionT]
+    _normalize_chat_id = field_validator("chat_id", mode="before")(
+        normalize_chat_target
+    )
     action_interval: float = 1  # actions的间隔时间，单位秒
 
     def __repr__(self) -> str:
