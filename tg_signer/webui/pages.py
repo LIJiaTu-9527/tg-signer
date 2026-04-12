@@ -330,9 +330,19 @@ class RunConfigPanel:
         self.account_select.value = current_account or (accounts[0] if accounts else "my_account")
         self.account_select.update()
 
-        self.signer_select.options = list_task_names("signer", self.state.workdir)
+        signer_options = list_task_names("signer", self.state.workdir)
+        self.signer_select.options = signer_options
+        self.signer_select.value = [
+            task for task in (self.signer_select.value or []) if task in signer_options
+        ]
         self.signer_select.update()
-        self.monitor_select.options = list_task_names("monitor", self.state.workdir)
+        monitor_options = list_task_names("monitor", self.state.workdir)
+        self.monitor_select.options = monitor_options
+        self.monitor_select.value = [
+            task
+            for task in (self.monitor_select.value or [])
+            if task in monitor_options
+        ]
         self.monitor_select.update()
         self.refresh_runtime_views()
 
@@ -346,9 +356,17 @@ class RunConfigPanel:
         if saved.account and saved.account not in options:
             options.insert(0, saved.account)
             self.account_select.options = options
+        signer_options = list_task_names("signer", self.state.workdir)
+        monitor_options = list_task_names("monitor", self.state.workdir)
+        self.signer_select.options = signer_options
+        self.monitor_select.options = monitor_options
         self.account_select.value = saved.account
-        self.signer_select.value = saved.signer_tasks
-        self.monitor_select.value = saved.monitor_tasks
+        self.signer_select.value = [
+            task for task in saved.signer_tasks if task in signer_options
+        ]
+        self.monitor_select.value = [
+            task for task in saved.monitor_tasks if task in monitor_options
+        ]
         self.account_select.update()
         self.signer_select.update()
         self.monitor_select.update()

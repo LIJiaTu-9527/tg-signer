@@ -82,7 +82,13 @@ def list_task_names(
     root = _config_root(kind, workdir)
     if not root.is_dir():
         return []
-    return sorted([p.name for p in root.iterdir() if p.is_dir()])
+    return sorted(
+        [
+            p.name
+            for p in root.iterdir()
+            if p.is_dir() and (p / "config.json").is_file()
+        ]
+    )
 
 
 def load_config(
